@@ -114,6 +114,14 @@
 	#return:hover {
 		background-color: #334155;
 	}
+	
+	.opzione {
+		display: inline-flex;
+		align-items: center;
+		margin: 8px 14px 8px 0;
+		font-size: 15px;
+			
+	}
 </style>
 </head>
 <body>
@@ -127,11 +135,39 @@
 		</fieldset>
 		<fieldset name="dettagli" id="dettagli">
 		<legend>INSERISCI I DETTAGLI DEL DISPOSITIVO</legend>
-		Gestore Telefonico <input name="gestore" type="text" class="casella" tabindex="5" size="15" maxlength="15" />
-		Numero di Telefono del Dispositivo <input name="numero_default" type="text" class="casella" tabindex="6" size="15" maxlength="15" />
-		Marca Dispositivo<input name="marca" type="text" class="casella" tabindex="7" size="15" maxlength="15" />
+		Gestore Telefonico <select name="gestore" id="gestore" class="casella" tabindex="5">
+			<option value="" selected disabled>Scegli il tuo gestore telefonico</option>
+			<option value="TIM">TIM</option>
+			<option value="Vodafone">Vodafone</option>
+			<option value="Wind">WindTRE</option>
+			<option value="Iliad">Iliad</option>
+			<option value="Fastweb">Fastweb</option>
+			<option value="Poste">PosteMobile</option>
+			<option value="Altro">Altro (da specificare)</option>
+		</select>
+		<input name="altro_option" id="altro_option" type="text" class="casella" size="15" maxlength="20" placeholder="Specifica il gestore..." style="display: none;">
+		Numero di Telefono del Dispositivo <input name="numero_default" type="tel" class="casella" tabindex="6" size="15" maxlength="15" />
+		Marca dispositivo <select name="marca" id="marca" class="casella" tabindex="7">
+			<option value="" selected disabled>Scegli il modello del tuo dispositivo</option>
+			<option value="Apple">Apple</option>
+			<option value="Samsung">Samsung</option>
+			<option value="Xiaomi">Xiaomi</option>
+			<option value="Huawei">Huawei</option>
+			<option value="Oppo">OPPO</option>
+			<option value="Google">Google</option>
+			<option value="Altro">Altro (da specificare)</option>
+		</select>
+		<input name="altro_marca" id="altro_marca" type="text" class="casella" size="15" maxlength="20" placeholder="Specifica la marca..." style="display: none;">
 		Modello Dispositivo <input name="modello" type="text" class="casella" tabindex="8" size="20" maxlength="20"/>
-		Breve descrizione del problema <textarea class="casella" name="recensione" tabindex="9" rows="5" cols="110" placeholder="Scrivi qui la problematica..."></textarea>		
+		Breve descrizione del problema <br />
+		<input class="opzione" type="checkbox" name="vetro" value="Vetro/Schermo rotto" />Vetro/Schermo rotto | &nbsp;&nbsp;&nbsp;
+		<input class="opzione" type="checkbox" name="batteria" value="Batteria degradata" />Batteria degradata |&nbsp;&nbsp;&nbsp;
+		<input class="opzione" type="checkbox" name="ricarica" value="Ricarica difettosa" />Ricarica difettosa |&nbsp;&nbsp;&nbsp;
+		<input class="opzione" type="checkbox" name="liquido" value="Danni da liquido" />Danni da liquido |&nbsp;&nbsp;&nbsp;
+		<input class="opzione" type="checkbox" name="accensione" value="Non si accende/spegne" />Non si accende/spegne |	&nbsp;&nbsp;&nbsp;	
+		<input class="opzione" type="checkbox" name="software" value="Problema Software" />Problema Software |	&nbsp;&nbsp;&nbsp;
+		<input class="opzione" type="checkbox" name="altro" value="Altro" />Altro |	&nbsp;&nbsp;&nbsp;
+		<textarea class="casella" name="problematica" tabindex="9" rows="5" cols="110" placeholder="Note aggiuntive..."></textarea>		
 		</fieldset>
 		<fieldset name="alternativo" id="alternativo">
 		<legend>INSERISCI NUMERO DI RECAPITO (se diverso dal numero del dispositivo in riparazione)</legend>
@@ -196,23 +232,95 @@
 	</div>	
 	<script>
 		
+			document.getElementById("gestore").addEventListener("change", apri);
+				function apri() {
+					if (gestore.value == "Altro") {
+						document.getElementById("altro_option").style.display = "block";
+					}	else {
+						document.getElementById("altro_option").style.display = "none";
+					}
+			}
+			
+			document.getElementById("marca").addEventListener("change", espandi);
+				function espandi() {
+					if (marca.value == "Altro") {
+						document.getElementById("altro_marca").style.display = "block";
+					}	else {
+						document.getElementById("altro_marca").style.display = "none";
+					}
+			}
+	
 		function invia(){
+			
+			let problematiche = [];
 			
 			document.getElementById("ric_nome").textContent = document.formAssistenza.nome.value;
 			document.getElementById("ric_cognome").textContent = document.formAssistenza.cognome.value;
 			document.getElementById("ric_codice").textContent = document.formAssistenza.codice.value;
 			document.getElementById("ric_citta").textContent = document.formAssistenza.citta.value;
-			document.getElementById("ric_gestore").textContent = document.formAssistenza.gestore.value;
 			document.getElementById("ric_num_default").textContent = document.formAssistenza.numero_default.value;
-			document.getElementById("ric_marca").textContent = document.formAssistenza.marca.value;
 			document.getElementById("ric_modello").textContent = document.formAssistenza.modello.value;
-			document.getElementById("ric_problema").textContent = document.formAssistenza.recensione.value;	
+			
+			if (document.formAssistenza.gestore.value == "Altro") {
+					document.getElementById("ric_gestore").textContent = document.formAssistenza.altro_option.value;
+			}	else {
+				document.getElementById("ric_gestore").textContent = document.formAssistenza.gestore.value;
+			}
+			
+			
+			if (document.formAssistenza.marca.value == "Altro") {
+					document.getElementById("ric_marca").textContent = document.formAssistenza.altro_marca.value;
+			}	else {
+				document.getElementById("ric_marca").textContent = document.formAssistenza.marca.value;
+			}
+			
 			
 			if (document.formAssistenza.numero_alt.value == "") {
 				document.getElementById("ric_num_alt").textContent = document.formAssistenza.numero_default.value;
 			} else {
 				document.getElementById("ric_num_alt").textContent = document.formAssistenza.numero_alt.value;
 			}
+			
+			if (document.formAssistenza.vetro.checked) {
+				problematiche.push(document.formAssistenza.vetro.value)
+			}
+			
+			if (document.formAssistenza.batteria.checked) {
+				problematiche.push(document.formAssistenza.batteria.value)
+			}
+			
+			if (document.formAssistenza.liquido.checked) {
+				problematiche.push(document.formAssistenza.liquido.value)
+			}
+			
+			if (document.formAssistenza.ricarica.checked) {
+				problematiche.push(document.formAssistenza.ricarica.value)
+			}
+			
+			if (document.formAssistenza.accensione.checked) {
+				problematiche.push(document.formAssistenza.accensione.value)
+			}
+			
+			if (document.formAssistenza.software.checked) {
+				problematiche.push(document.formAssistenza.software.value)
+			}
+			
+			if (document.formAssistenza.altro.checked) {
+				problematiche.push(document.formAssistenza.altro.value)
+			}
+			
+			let elenco = problematiche.join(", ");
+			let note = document.formAssistenza.problematica.value;
+			
+			let descrizione = [];
+			
+				if (elenco !== "") {
+					descrizione.push(elenco);
+				}
+				if (note !== "") {
+					descrizione.push(note);
+				}
+			document.getElementById("ric_problema").textContent = descrizione.join (" | ");
 			
 			document.formAssistenza.style.display = "none";
 			document.getElementById("ricevuta").style.display = "block";	
@@ -222,7 +330,9 @@
 		function ritorna() {
 			document.getElementById("formAssistenza").reset()
 			document.formAssistenza.style.display = "block";
-			document.getElementById("ricevuta").style.display = "none";			
+			document.getElementById("ricevuta").style.display = "none";
+			document.getElementById("altro_marca").style.display = "none";
+			document.getElementById("altro_option").style.display = "none";			
 		}		
 	
 	document.getElementById("submit").addEventListener("click", invia);
